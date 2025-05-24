@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grading System</title>
+    <style>
+        .headline {
+            display: flex;
+        }
+        .body {
+            margin-left: 40px;
+            margin-right: 40px;
+        }
+        .form {
+            margin-left: 20px;
+        }
+        .weights {
+            display: flex;
+            margin-bottom: 8px;
+            margin-left: 20px;
+        }
+        .weights input {
+            width: 40px;
+            margin-bottom: 10px;
+            text-align: right;
+            margin-right: 6px;
+        }
+        .weightrow {
+            width: 300px;
+        }
+        .main-content {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+        }
+        .gradecolumn {
+            flex: 1;
+            border: 1px solid #ccc;
+            padding: 10px;
+            min-height: 250px;
+        }
+        .grade {
+            text-align: right;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="headline"><button onclick="location.href='GRADING SYSTEM.html'" style="height: 30px; width: 30px; text-align: center;"> &larr; </button>
+    <b style="margin-left: 470px;">GRADE COMPUTATION</b></h1>
+<div class="body">
+    
+    <p><b>ASSESSMENT WEIGHTAGES</b></p>
+    <div class="weights">
+        <div class="weightrow">QUIZ</div>
+            <input type="number" class="qz-weight"> %
+    </div>
+    <div class="weights">
+        <div class="weightrow">CLASS PARTICIPATION </div>
+        <input type="number" class="cp-weight"> % 
+    </div>
+    <div class="weights">
+        <div class="weightrow">SUMMATIVE ASSESSMENT </div>
+            <input type="number" class="sa-weight"> % 
+    </div>
+
+    <div class="main-content">
+        <div class="gradecolumn">
+            <p style="text-align: center;"><b>QUIZZES</b></p>
+            <div class="form">
+                <div id="QuizContainer"></div>
+                <button onclick="addQuiz()">Add an assessment</button>
+            </div>
+        </div>
+        <div class="gradecolumn">
+            <p style="text-align: center;"><b>CLASS PARTICIPATION</b></p>
+            <div class="form">
+                <div id="cpContainer"></div>
+                <button onclick="addCP()">Add an assessment</button>
+            </div>
+        </div>
+        <div class="gradecolumn">
+            <p style="text-align: center;"><b>SUMMATIVE ASSESSMENT</b></p>
+            <div class="form">
+                <div id="saContainer"></div>
+                <button onclick="addSA()">Add an assessment</button>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="grade">
+        <button onclick="resetAll()">Clear Data</button>
+        <button onclick="computeGrade()">Compute Grade</button> 
+        <p id="WeightedResult" style="font-weight: bold;"></p>
+        <p id="LetterGrade" style="font-weight: bold;"></p>
+    </div>
+</div>
+    <script>
+        // Add an additional assessment
+        let quizCount = 0;
+        let cpCount = 0;
+        let saCount = 0;
+
+        function addQuiz() {
+            quizCount++;
+
+            const QuizRow = document.createElement('div');
+            QuizRow.innerHTML = `
+                Quiz ${quizCount}: 
+                <input type="number" class="quiz-score" placeholder="Score" style="width: 50px; text-align: right;"> / 
+                <input type="number" class="quiz-base" placeholder="Base" style="width: 50px; text-align: right;">
+                <button onclick="removeQz(this)" style="color: red;"> X </button>`;
+
+            QuizRow.style.marginBottom = '8px';
+            document.getElementById('QuizContainer').appendChild(QuizRow);
+        }
+        function removeQz(button) {
+            quizCount--;
+
+            const qzblock = button.parentElement;
+            qzblock.remove();
+        }
+        function addCP() {
+            cpCount++;
+
+            const cpRow = document.createElement('div');
+            cpRow.innerHTML = `
+                CP ${cpCount}: 
+                <input type="number" class="cp-score" placeholder="Score" style="width: 50px; text-align: right;"> / 
+                <input type="number" class="cp-base" placeholder="Base" style="width: 50px; text-align: right;">
+                <button onclick="removeCP(this)" style="color: red;"> X </button>`;
+            
+            cpRow.style.marginBottom = '8px';
+            document.getElementById('cpContainer').appendChild(cpRow);
+        }
+        function removeCP(button) {
+            cpCount--;
+
+            const cpblock = button.parentElement;
+            cpblock.remove();
+        }
+        function addSA() {
+            saCount++;
+            const saRow = document.createElement('div');
+            saRow.innerHTML = `
+                SA ${saCount}: 
+                <input type="number" class="sa-score" placeholder="Score" style="width: 50px; text-align: right;"> / 
+                <input type="number" class="sa-base" placeholder="Base" style="width: 50px; text-align: right;">
+                <button onclick="removeSA(this)" style="color: red;"> X </button>`;
+            
+            saRow.style.marginBottom = '8px';
+            document.getElementById('saContainer').appendChild(saRow);
+        }
+        function removeSA(button) {
+            saCount--;
+            
+            const sablock = button.parentElement;
+            sablock.remove();
+        }
+        // computation of EQUIVALENT PERCENTAGE
+        function computeGrade() {
+            // qz computation
+            const QzS = document.querySelectorAll('.quiz-score');
+            const QzB = document.querySelectorAll('.quiz-base');
+           
+            let QuizSum = 0;
+            let ValidQuiz = 0;
+
+            for (let Q = 0; Q < QzS.length; Q++) {
+                const QuizScore = parseFloat(QzS[Q].value.trim());
+                const QuizBase = parseFloat(QzB[Q].value.trim());
+
+                if (!isNaN(QuizScore) && !isNaN(QuizBase) > 0) {
+                        const QuizPercentage = (QuizScore / QuizBase) * 100;
+                        QuizSum += QuizPercentage;
+                        ValidQuiz++;
+                }
+            }
+            // cp computation
+            const cpS = document.querySelectorAll('.cp-score');
+            const cpB = document.querySelectorAll('.cp-base');
+
+            let cpSum = 0;
+            let validcp = 0;
+
+            for (let C = 0; C < cpS.length; C++) {
+                const cpScore = parseFloat(cpS[C].value.trim());
+                const cpBase = parseFloat(cpB[C].value.trim());
+                
+                if (!isNaN(cpScore) && !isNaN(cpBase) > 0) {
+                    const cpPercentage = (cpScore / cpBase) * 100;
+                    cpSum += cpPercentage;
+                    validcp++;
+                }
+            }
+            
+            // sa computation
+            const saS = document.querySelectorAll('.sa-score');
+            const saB = document.querySelectorAll('.sa-base');
+
+            let saSum = 0;
+            let validsa = 0;
+
+            for (let S = 0; S < saS.length; S++) {
+                const saScore = parseFloat(saS[S].value.trim());
+                const saBase = parseFloat(saB[S].value.trim());
+                
+                if(!isNaN(saScore) && !isNaN(saBase) > 0) {
+                    const saPercentage = (saScore / saBase) * 100;
+                    saSum += saPercentage;
+                    validsa++;
+                }
+            }
+
+            let WeightedResult ='';
+            let LetterGrade = '';
+
+            if (ValidQuiz > 0 && validsa > 0) {
+                const QzWeightInput = document.querySelectorAll('.qz-weight')[0];
+                const CPWeightInput = document.querySelectorAll('.cp-weight')[0];
+                const SAWeightInput = document.querySelectorAll('.sa-weight')[0];
+
+                const QzWeight = parseFloat(QzWeightInput.value);
+                const CPWeight = parseFloat(CPWeightInput.value);
+                const SAWeight = parseFloat(SAWeightInput.value);
+
+                const QuizAve = (QuizSum / ValidQuiz);
+                const saAve = (saSum / validsa);
+
+                // test validity of optional class participation
+                let cpAve = 0;
+                let cpWA = 0; 
+                let cpweightvalid = false;
+
+                if (validcp > 0 && !isNaN(CPWeight)) {
+                    cpAve = (cpSum / validcp);
+                    cpWA = (cpAve * CPWeight) / 100;  
+                    cpweightvalid = true;
+                }
+                
+                // test validity of weightages
+                let tweightvalid = QzWeight + (!isNaN(CPWeight) ? CPWeight : 0) + SAWeight;
+
+                // computation
+                if(!isNaN(QzWeight) && !isNaN(SAWeight) && tweightvalid == 100) {
+                    const QuizWA = (QuizAve * QzWeight) / 100;
+                    const saWA = (saAve * SAWeight) / 100;
+                    const totalWA = QuizWA + saWA + (cpweightvalid ? cpWA : 0);
+
+                    WeightedResult = `Weighted Percentage: ${totalWA.toFixed(3)}%`;
+
+                    // determining the letter grade
+                    switch (true) {
+                        case (totalWA >= 92):
+                            LetterGrade = 'Letter Grade: A';
+                            break;
+                        case (totalWA >= 85):
+                            LetterGrade = 'Letter Grade: B+';
+                            break;
+                        case (totalWA >= 78):
+                            LetterGrade = 'Letter Grade: B';
+                            break;
+                        case (totalWA >= 71):
+                            LetterGrade = 'Letter Grade: C+';
+                            break;
+                        case (totalWA >= 64):
+                            LetterGrade = 'Letter Grade: C';
+                            break;
+                        case (totalWA >= 57):
+                            LetterGrade = 'Letter Grade: D+';
+                            break;
+                        case (totalWA >= 50):
+                            LetterGrade = 'Letter Grade: D';
+                            break;
+                        default:
+                            LetterGrade = 'Letter Grade: F';
+                    }
+                }
+                else {
+                    WeightedResult = 'Missing or invalid weightages.';
+                }
+            } 
+            else {
+                WeightedResult = 'Incomplete or invalid data entered.';
+            }
+
+            document.getElementById('WeightedResult').innerHTML = WeightedResult;
+            document.getElementById('LetterGrade').innerHTML = LetterGrade;
+        }
+        function resetAll() {
+            const confirmed = confirm("Are you sure you want to clear all data?");
+            if(!confirmed) return; 
+
+            quizCount = 0;
+            cpCount = 0;
+            saCount = 0;
+
+            document.getElementById('QuizContainer').innerHTML = '';
+            document.getElementById('cpContainer').innerHTML = '';
+            document.getElementById('saContainer').innerHTML = '';
+
+            document.querySelectorAll('.qz-weight, .cp-weight, .sa-weight').forEach(input => {input.value = '';});
+            document.getElementById('WeightedResult').innerHTML = '';
+            document.getElementById('LetterGrade').innerHTML = '';
+
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grade System</title>
+    <style>
+        .headline {
+            display: flex;
+        }
+        .box {
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            max-width: 400px;
+            min-height: 100px;
+        }
+        .box input {
+            width: 50px;
+            text-align: right;
+        }
+        .insidebox {
+            margin-left: 10px;
+            margin-top: 8px;
+        }
+        .row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .label {
+            width: 300px;
+        }
+        .result {
+            text-align: right;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="headline"><button onclick="location.href='GRADING SYSTEM.html'" style="height: 30px; width: 30px; text-align: center;"> &larr; </button>
+    <b style="margin-left: 470px;">GRADE FORECASTING</b></h1>
+    <div class="box">
+        <div class="insidebox">
+            <div class="row">
+                <div class="label">Current Grade: </div>
+                <input type="number" class="cgrade">
+            </div>
+            <div class="row">
+                <div class="label">Target Grade: </div>
+                <input type="number" class="tgrade">
+            </div>
+            <br>
+            <div class="result">    
+                <button onclick="ForecastGrade()" style="margin-bottom: 10px;">Compute Required Grade</button>
+                <div id="need" style="font-weight: bold; margin-bottom: 8px;"></div>
+            </div>
+        </div>
+    </div>    
+    
+</body>
+<script>
+    
+
+    function ForecastGrade() {
+        let need = 0;
+        
+        const cgradeinput = document.querySelector('.cgrade');
+        const tgradeinput = document.querySelector('.tgrade');
+
+        const current = parseFloat(cgradeinput.value);
+        const target = parseFloat(tgradeinput.value);    
+
+        if (!isNaN(current) && !isNaN(target)) {
+            const required = (target * 2) - current;
+            need = `Average Grade Required: ${Math.ceil(required)}`;
+        }
+        else {
+            need = 'No valid data entered';
+        }
+        document.getElementById('need').innerHTML = need;
+    }
+</script>
+</html>
